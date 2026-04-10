@@ -38,7 +38,7 @@
 ## Формат стенда
 
 ### Топология
-[[screenshots/topology.png]]
+![screenshots/topology.png](screenshots/topology.png)
 
 ### Допустимые платформы виртуализации
 - VirtualBox
