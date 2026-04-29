@@ -20,3 +20,15 @@
 
 # ICMP flood
     alert icmp any any -> $HOME_NET any (msg:"LAB ICMP flood detected"; threshold:type both, track by_src, count 20, seconds 3; sid:1000010; rev:1;)
+
+# 03_powershell_download
+    alert http any any -> any any (
+    msg:"PowerShell Script Download via WebClient";
+    flow:established,to_server;
+    http.method; content:"GET";
+    http.uri; content:".ps1";
+    http.header; content:"Microsoft-WebClient";
+    classtype:trojan-activity;
+    sid:1000011;
+    rev:1;
+    )
