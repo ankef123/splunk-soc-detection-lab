@@ -23,11 +23,10 @@
 
 # 03_powershell_download
     alert http any any -> any any (
-    msg:"PowerShell Script Download via WebClient";
+    msg:"LAB PowerShell Script Download";
     flow:established,to_server;
-    http.method; content:"GET";
-    http.uri; content:".ps1";
-    http.header; content:"Microsoft-WebClient";
+    http.method; content:"GET"; nocase;
+    http.uri; content:".ps1"; nocase;
     classtype:trojan-activity;
     sid:1000011;
     rev:1;

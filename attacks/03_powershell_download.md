@@ -23,11 +23,17 @@
 ![powershelldownloadcmd](../screenshots/image-13.png)
 
 # 2. Источник логов (Data Source)
-Sysmon (EventID 1 — Process Create)
+## Sysmon (EventID 1 — Process Create)
 
-PowerShell Logging (EventID 4104 — ScriptBlock)
+## PowerShell Logging (EventID 4104 — ScriptBlock)
 
-Suricata — network layer
+## Suricata — network layer
+search:
+    index=suricata event_type=alert alert.signature_id=1000011
+
+используем sid наших local.rules
+
+![suricata_layear](../screenshots/image-14.png)
 
 # 3. Detection
     index=windows ("<EventID>4625</EventID>" OR "<EventID>4624</EventID>")
