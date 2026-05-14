@@ -24,35 +24,66 @@
 
 # 2. Источник логов (Data Source)
 ## Sysmon (EventID 1 — Process Create)
+search:
+    index=windows LogName="Microsoft-Windows-Sysmon/Operational" EventCode=1
+    Image="*powershell.exe*"
+    (CommandLine="*DownloadString*" OR CommandLine="*Invoke-WebRequest*" OR CommandLine="*IEX*" OR CommandLine="*http://*")
+    | table _time host User Image CommandLine ParentImage ParentCommandLine ProcessId ParentProcessId IntegrityLevel
+
+![sysmon_pwsh_layer](../screenshots/image-15.png)
 
 ## PowerShell Logging (EventID 4104 — ScriptBlock)
+search:
+    index=windows LogName="Microsoft-Windows-PowerShell/Operational" EventCode=4104
+    (Message="*DownloadString*" OR Message="*Invoke-WebRequest*" OR Message="*IEX*" OR Message="*test.ps1*")
+    | table _time host ComputerName User Message
 
+![pwsh_logs_layer](../screenshots/image-16.png)
 ## Suricata — network layer
 search:
     index=suricata event_type=alert alert.signature_id=1000011
 
 используем sid наших local.rules
 
-![suricata_layear](../screenshots/image-14.png)
+![suricata_layer](../screenshots/image-14.png)
 
 # 3. Detection
-    index=windows ("<EventID>4625</EventID>" OR "<EventID>4624</EventID>")
-    | rex "<EventID>(?<EventCode>\d+)</EventID>"
-    | rex "LogonType'>(?<LogonType>\d+)<"
-    | rex "TargetUserName'>(?<TargetUserName>[^<]+)<"
-    | rex "IpAddress'>(?<IpAddress>[^<]+)<"
-    | stats count(eval(EventCode=4625)) as failed 
-            count(eval(EventCode=4624)) as success 
-            by TargetUserName, IpAddress
-    | where failed > 5 AND success > 0
+    (
+        index=windows LogName="Microsoft-Windows-Sysmon/Operational" EventCode=1
+        Image="*powershell.exe*"
+        (CommandLine="*DownloadString*" OR CommandLine="*Invoke-WebRequest*" OR CommandLine="*IEX*" OR CommandLine="*test.ps1*")
+    )
+    OR
+    (
+        index=windows LogName="Microsoft-Windows-PowerShell/Operational" EventCode=4104
+        (Message="*DownloadString*" OR Message="*Invoke-WebRequest*" OR Message="*IEX*" OR Message="*test.ps1*")
+    )
+    OR
+    (
+        index=suricata event_type=alert alert.signature_id=1000011
+    )
+    | eval detection_layer=case(
+        LogName=="Microsoft-Windows-Sysmon/Operational" AND EventCode=1, "Sysmon ProcessCreate",
+        LogName=="Microsoft-Windows-PowerShell/Operational" AND EventCode=4104, "PowerShell ScriptBlock",
+        event_type=="alert", "Suricata Alert"
+    )
+    | eval evidence=case(
+        detection_layer=="Sysmon ProcessCreate", CommandLine,
+        detection_layer=="PowerShell ScriptBlock", Message,
+        detection_layer=="Suricata Alert", payload_printable
+    )
+    | bin _time span=10m
+    | stats values(detection_layer) as detection_layers dc(detection_layer) as layer_count values(evidence) as evidence by _time
+    | where layer_count>=2
+    | table _time layer_count detection_layers evidence
 
-![Detection_of_bruteforceAndSuccess](../screenshots/image-7.png)
+![Detection_of_pwsh_dwnld](../screenshots/image-17.png)
 
 # 4. alert settings
-![bruteforce_settings](../screenshots/image-9.png)
+![pwsh_download_settings](../screenshots/image-18.png)
 
 # 5. triggered alert
-![triggered_bruteforce](../screenshots/image-10.png)
+![triggered_pwsh_dwnld](../screenshots/image-19.png)
 
 # 6. Investigation
 Т.к. инфраструктура лабораторной ограничена, то опишу свои действия простыми словами:
@@ -61,12 +92,14 @@ search:
 
 Затем я бы оценил контекст: является ли активность ожидаемой для данного пользователя, используется ли внешний IP, типичное ли время для этого пользователя и наблюдаются ли аналогичные попытки на других учетных записях (признак password spraying). После этого я бы проверил, какие действия были выполнены после успешного входа — запуск процессов (Sysmon EventID 1), возможные команды, сетевые подключения или попытки закрепления.
 
-Проверить идёт ли атака на один аккаунт или несколько:
+Посмотреть информацию по инциденту. Самое важное поле здесь — ProcessGuid: по нему дальше удобно искать дочерние процессы:
+    index=windows LogName="Microsoft-Windows-Sysmon/Operational" EventCode=1
+    Image="*powershell.exe*"
+    (CommandLine="*DownloadString*" OR CommandLine="*Invoke-WebRequest*" OR CommandLine="*IEX*" OR CommandLine="*test.ps1*" OR CommandLine="*http://*")
+    | table _time host User ProcessGuid ProcessId Image CommandLine ParentImage ParentCommandLine IntegrityLevel
+    | sort _time
 
-    index=windows "<EventID>4625</EventID>"
-    | rex "TargetUserName'>(?<TargetUserName>[^<]+)<"
-    | stats count by TargetUserName
-    | sort -count
+![check_for_process_guid](../screenshots/image-20.png)
 
 Проверить действия после входа:
 
