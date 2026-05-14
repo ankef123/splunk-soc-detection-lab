@@ -25,6 +25,7 @@
 # 2. Источник логов (Data Source)
 ## Sysmon (EventID 1 - Process Create)
 search:
+
     index=windows LogName="Microsoft-Windows-Sysmon/Operational" EventCode=1
     Image="*powershell.exe*"
     (CommandLine="*DownloadString*" OR CommandLine="*Invoke-WebRequest*" OR CommandLine="*IEX*" OR CommandLine="*http://*")
@@ -34,6 +35,7 @@ search:
 
 ## PowerShell Logging (EventID 4104 - ScriptBlock)
 search:
+
     index=windows LogName="Microsoft-Windows-PowerShell/Operational" EventCode=4104
     (Message="*DownloadString*" OR Message="*Invoke-WebRequest*" OR Message="*IEX*" OR Message="*test.ps1*")
     | table _time host ComputerName User Message
@@ -41,6 +43,7 @@ search:
 ![pwsh_logs_layer](../screenshots/image-16.png)
 ## Suricata - network layer
 search:
+
     index=suricata event_type=alert alert.signature_id=1000011
 
 используем sid наших local.rules
@@ -93,6 +96,7 @@ search:
 После подтверждения я бы оценил последствия: проверил, какие дочерние процессы запустил PowerShell, были ли выполнены команды вроде whoami, net user, ipconfig, запуск cmd.exe или попытки закрепления. Дальше я бы определил масштаб - встречалась ли такая же активность на других хостах или у других пользователей. Если активность выглядела вредоносной, я бы инициировал реагирование: изоляцию хоста, блокировку IP/URL, сбор артефактов, сброс учётных данных при необходимости и эскалацию в IR/DFIR.
 
 Посмотреть информацию по инциденту. Самое важное поле здесь - ProcessGuid: по нему дальше удобно искать дочерние процессы:
+
     index=windows LogName="Microsoft-Windows-Sysmon/Operational" EventCode=1
     Image="*powershell.exe*"
     (CommandLine="*DownloadString*" OR CommandLine="*Invoke-WebRequest*" OR CommandLine="*IEX*" OR CommandLine="*test.ps1*" OR CommandLine="*http://*")
@@ -102,6 +106,7 @@ search:
 ![check_for_process_guid](../screenshots/image-20.png)
 
 Посмотреть, какие процессы были запущены этим PowerShell:
+
     index=windows LogName="Microsoft-Windows-Sysmon/Operational" EventCode=1
     ParentProcessGuid="{PROCESS_GUID_ИЗ_ПЕРВОГО_ЗАПРОСА}"
     | table _time host User Image CommandLine ParentImage ParentCommandLine ProcessId ParentProcessId

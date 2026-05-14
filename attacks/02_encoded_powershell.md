@@ -56,8 +56,8 @@ ProcessId: 8508
 ParentProcessId: 2420
 
 Теперь выполним:
-    index=windows EventCode=1 ProcessId=8508 OR ProcessId=2420
 
+    index=windows EventCode=1 ProcessId=8508 OR ProcessId=2420
     | table _time Image CommandLine ParentImage ParentCommandLine
 
 ![investigation spl](../screenshots/image-6.png)
