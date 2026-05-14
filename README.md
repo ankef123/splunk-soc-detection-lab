@@ -34,7 +34,8 @@
 - **построение use case’ов на SPL**
 - **MITRE ATT&CK mapping**
 - **базовый incident investigation workflow**
-- **структурированное техническое документирование**
+- **Настройка и развёртывание: Splunk SIEM и её компонентов / Suricata**
+- **Администрирование ПО, имитирующего сервисы компании**
 
 ---
 
@@ -50,7 +51,6 @@
 - собирать host, authentication и network telemetry;
 - реализовать несколько detection use case’ов;
 - валидировать их на контролируемых сценариях;
-- документировать ограничения, false positives и возможные улучшения.
 
 ---
 
@@ -239,13 +239,8 @@
 
 ```text
 .
-├── README.md
-├── docs/
-├── architecture/
-├── detections/
-├── spl/
-├── attack-simulations/
-├── reports/
-├── screenshots/
-├── config/
-└── portfolio/
+├── README.md 
+├── task.md #сгенерированное + отредактированное задание "лабы"
+├── screenshots/ #скриншоты
+├── attacks/ #подготовка + сама атака; источники логов; SPL; настройки алерта; его срабатывание; мои мысли и действия по расследованию; MITRE ATT&CK mapping
+└── suricata_rules/ #Правила Suricata, используемые в лабе
