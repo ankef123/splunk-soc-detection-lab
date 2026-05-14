@@ -6,7 +6,7 @@
 
 # Web атаки
 ## Попытка доступа к admin
-    alert http any any -> $HOME_NET any (msg:"LAB Access to /admin detected"; content:"/admin"; http_uri; sid:1000005; rev:1;)
+    alert http any any -> $HOME_NET any (msg:"LAB Access to /admin detected"; content:"/admin/"; http_uri; sid:1000005; rev:1;)
 ## Попытка API доступа
     alert http any any -> $HOME_NET any (msg:"LAB API access detected"; content:"/api"; http_uri; sid:1000006; rev:1;)
 ## SQL Injection (простая сигнатура)

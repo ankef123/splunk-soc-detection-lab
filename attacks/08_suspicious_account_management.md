@@ -17,27 +17,27 @@
 
 # 2. Источник логов (Data Source)
 ## Windows Security Logs - Account Management Events (4720, 4732)
-4720 — создана новая учётная запись
+4720 - создана новая учётная запись
 
-4732 — учётная запись добавлена в локальную группу Administrators / Администраторы
+4732 - учётная запись добавлена в локальную группу Administrators / Администраторы
 
 Ключевые поля:
 
-EventCode — тип события Windows Security Log
+EventCode - тип события Windows Security Log
 
-TargetUserName — имя созданной учётной записи в EventID 4720
+TargetUserName - имя созданной учётной записи в EventID 4720
 
-TargetSid — SID созданной учётной записи в EventID 4720
+TargetSid - SID созданной учётной записи в EventID 4720
 
-MemberSid — SID пользователя, добавленного в группу в EventID 4732
+MemberSid - SID пользователя, добавленного в группу в EventID 4732
 
-SubjectUserName — пользователь, который выполнил административное действие
+SubjectUserName - пользователь, который выполнил административное действие
 
-TargetDomainName — домен или локальная область действия группы/учётной записи
+TargetDomainName - домен или локальная область действия группы/учётной записи
 
-GroupName — имя группы, куда был добавлен пользователь, например Администраторы
+GroupName - имя группы, куда был добавлен пользователь, например Администраторы
 
-host — сервер, на котором произошло изменение
+host - сервер, на котором произошло изменение
 
 # 3. Detection
     index=windows ("<EventID>4720</EventID>" OR "<EventID>4732</EventID>")
