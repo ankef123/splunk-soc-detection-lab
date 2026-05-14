@@ -23,7 +23,7 @@
 ![powershelldownloadcmd](../screenshots/image-13.png)
 
 # 2. Источник логов (Data Source)
-## Sysmon (EventID 1 — Process Create)
+## Sysmon (EventID 1 - Process Create)
 search:
     index=windows LogName="Microsoft-Windows-Sysmon/Operational" EventCode=1
     Image="*powershell.exe*"
@@ -32,14 +32,14 @@ search:
 
 ![sysmon_pwsh_layer](../screenshots/image-15.png)
 
-## PowerShell Logging (EventID 4104 — ScriptBlock)
+## PowerShell Logging (EventID 4104 - ScriptBlock)
 search:
     index=windows LogName="Microsoft-Windows-PowerShell/Operational" EventCode=4104
     (Message="*DownloadString*" OR Message="*Invoke-WebRequest*" OR Message="*IEX*" OR Message="*test.ps1*")
     | table _time host ComputerName User Message
 
 ![pwsh_logs_layer](../screenshots/image-16.png)
-## Suricata — network layer
+## Suricata - network layer
 search:
     index=suricata event_type=alert alert.signature_id=1000011
 
@@ -88,11 +88,11 @@ search:
 # 6. Investigation
 Т.к. инфраструктура лабораторной ограничена, то опишу свои действия простыми словами:
 
-При обнаружении множественных неудачных попыток входа по RDP (EventCode 4625) с последующим успешным логоном (4624), я бы сначала подтвердил детект, проверив количество неудачных попыток, источник (IP/хост) и целевую учетную запись. Далее я бы определил, был ли успешный вход выполнен с того же источника, что и неудачные попытки, и проанализировал тип входа (LogonType 10 — RDP).
+При обнаружении подобного события, я бы сначала подтвердил сам факт выполнения подозрительной PowerShell-команды: проверил Sysmon EventID 1, командную строку процесса, пользователя, хост и родительский процесс. Затем я бы посмотрел PowerShell ScriptBlock logs, чтобы понять, какой именно код был выполнен, затем сопоставил это с сетевыми логами Suricata. 
 
-Затем я бы оценил контекст: является ли активность ожидаемой для данного пользователя, используется ли внешний IP, типичное ли время для этого пользователя и наблюдаются ли аналогичные попытки на других учетных записях (признак password spraying). После этого я бы проверил, какие действия были выполнены после успешного входа — запуск процессов (Sysmon EventID 1), возможные команды, сетевые подключения или попытки закрепления.
+После подтверждения я бы оценил последствия: проверил, какие дочерние процессы запустил PowerShell, были ли выполнены команды вроде whoami, net user, ipconfig, запуск cmd.exe или попытки закрепления. Дальше я бы определил масштаб - встречалась ли такая же активность на других хостах или у других пользователей. Если активность выглядела вредоносной, я бы инициировал реагирование: изоляцию хоста, блокировку IP/URL, сбор артефактов, сброс учётных данных при необходимости и эскалацию в IR/DFIR.
 
-Посмотреть информацию по инциденту. Самое важное поле здесь — ProcessGuid: по нему дальше удобно искать дочерние процессы:
+Посмотреть информацию по инциденту. Самое важное поле здесь - ProcessGuid: по нему дальше удобно искать дочерние процессы:
     index=windows LogName="Microsoft-Windows-Sysmon/Operational" EventCode=1
     Image="*powershell.exe*"
     (CommandLine="*DownloadString*" OR CommandLine="*Invoke-WebRequest*" OR CommandLine="*IEX*" OR CommandLine="*test.ps1*" OR CommandLine="*http://*")
@@ -101,17 +101,13 @@ search:
 
 ![check_for_process_guid](../screenshots/image-20.png)
 
-Проверить действия после входа:
-
-    index=windows EventCode=1
-    | search "powershell.exe" OR "cmd.exe"
-    | table _time Image CommandLine User
-
-Параллельно я бы проверил масштаб инцидента: есть ли похожая активность на других хостах или учетных записях, чтобы понять, изолированный это случай или часть атаки. В случае подозрительной активности я бы инициировал реагирование: временно заблокировал учетную запись, ограничил доступ с IP-источника (если возможно), изолировал хост и эскалировал инцидент в IR/DFIR команду.
-
-В завершение я бы задокументировал инцидент, указав источник атак, затронутые учетные записи, количество попыток входа, факт успешной аутентификации и последующие действия злоумышленника.
+Посмотреть, какие процессы были запущены этим PowerShell:
+    index=windows LogName="Microsoft-Windows-Sysmon/Operational" EventCode=1
+    ParentProcessGuid="{PROCESS_GUID_ИЗ_ПЕРВОГО_ЗАПРОСА}"
+    | table _time host User Image CommandLine ParentImage ParentCommandLine ProcessId ParentProcessId
+    | sort _time
 
 # 7. MITRE ATT&CK mapping
-T1059.001 — Command and Scripting Interpreter: PowerShell
+T1059.001 - Command and Scripting Interpreter: PowerShell
 
-T1105 — Ingress Tool Transfer
+T1105 - Ingress Tool Transfer
