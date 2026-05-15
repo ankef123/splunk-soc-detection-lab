@@ -115,9 +115,9 @@ host - сервер, на котором произошло изменение
     Start-Process powershell.exe -Credential $cred -ArgumentList '-NoProfile -Command "whoami; hostname; ipconfig"'
 
 # 7. MITRE ATT&CK mapping
-**Tactic:** Persistence (TA0003)  
-**Technique:** T1136 - Create Account  
-**Sub‑technique:** T1136.001 - Local Account  
-                ↓
-**Tactic:** Persistence / Privilege Escalation (TA0003 / TA0004)  
-**Technique:** T1098 - Account Manipulation  
+1) **Tactic:** Persistence (TA0003)  
+    **Technique:** T1136 - Create Account  
+    **Sub‑technique:** T1136.001 - Local Account  
+
+2) **Tactic:** Persistence / Privilege Escalation (TA0003 / TA0004)  
+    **Technique:** T1098 - Account Manipulation  
