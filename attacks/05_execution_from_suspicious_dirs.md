@@ -85,16 +85,16 @@ IntegrityLevel - уровень привилегий процесса
 ![example_of_investigation_query](../screenshots/image-30.png)
 
 # 7. MITRE ATT&CK mapping
-**Tactic:** Initial Access (TA0001)  
-**Technique:** T1204 - User Execution  
-**Sub‑technique:** T1204.002 - Malicious File  
-                ↓     
-**Tactic:** Execution (TA0002)  
-**Technique:** T1059 - Command and Scripting Interpreter  
-**Sub‑technique:** T1059.003 - Windows Command Shell  
-                ↓
-**Tactic:** Discovery (TA0007)  
-**Techniques:**
-- T1033 - System Owner/User Discovery (`whoami`)
-- T1007 - System Information Discovery (`hostname`)
-- T1016 - System Network Configuration Discovery (`ipconfig`)
+1) **Tactic:** Initial Access (TA0001)  
+    **Technique:** T1204 - User Execution  
+    **Sub‑technique:** T1204.002 - Malicious File    
+
+2) **Tactic:** Execution (TA0002)  
+    **Technique:** T1059 - Command and Scripting Interpreter  
+    **Sub‑technique:** T1059.003 - Windows Command Shell
+   
+3) **Tactic:** Discovery (TA0007)  
+    **Techniques:**
+    - T1033 - System Owner/User Discovery (`whoami`)
+    - T1007 - System Information Discovery (`hostname`)
+    - T1016 - System Network Configuration Discovery (`ipconfig`)
