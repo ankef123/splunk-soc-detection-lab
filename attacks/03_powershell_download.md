@@ -113,9 +113,9 @@ search:
     | sort _time
 
 # 7. MITRE ATT&CK mapping
-**Tactic:** Execution (TA0002)  
-**Technique:** T1059 - Command and Scripting Interpreter  
-**Sub‑technique:** T1059.001 → выполнение PowerShell
+1) **Tactic:** Execution (TA0002)  
+    **Technique:** T1059 - Command and Scripting Interpreter  
+    **Sub‑technique:** T1059.001 → выполнение PowerShell
 
-**Tactic:** Command and Control (TA0011)  
-**Technique:** T1105 — Ingress Tool Transfer
+2) **Tactic:** Command and Control (TA0011)  
+    **Technique:** T1105 — Ingress Tool Transfer
