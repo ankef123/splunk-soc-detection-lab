@@ -113,6 +113,9 @@ search:
     | sort _time
 
 # 7. MITRE ATT&CK mapping
-T1059.001 - Command and Scripting Interpreter: PowerShell
+**Tactic:** Execution (TA0002)  
+**Technique:** T1059 - Command and Scripting Interpreter  
+**Sub‑technique:** T1059.001 → выполнение PowerShell
 
-T1105 - Ingress Tool Transfer
+**Tactic:** Command and Control (TA0011)  
+**Technique:** T1105 — Ingress Tool Transfer

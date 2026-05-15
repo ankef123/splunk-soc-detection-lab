@@ -71,8 +71,12 @@ ParentProcessId: 2420
 Использование параметра -enc является типичной техникой обфускации и часто применяется злоумышленниками для обхода средств защиты.
 
 # 7. MITRE ATT&CK mapping
-T1059.001 → выполнение PowerShell
+**Tactic:** Execution (TA0002)
+**Technique:** T1059 - Command and Scripting Interpreter  
+**Sub-technique:** T1059.001 → выполнение PowerShell
        ↓
-T1027 → обфускация (-enc)
+**Tactic:** Defense Evasion (TA0005)
+**Technique:** T1027 → обфускация (-enc)
        ↓
-T1033 → сбор информации (whoami)
+**Tactic:** Discovery (TA0007)
+**Technique:** T1033 → сбор информации (whoami)

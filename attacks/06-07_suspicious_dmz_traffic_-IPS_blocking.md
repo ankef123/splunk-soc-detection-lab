@@ -102,4 +102,8 @@ search:
 ![example_of_investigation_query](../screenshots/image-45.png)
 
 # 7. MITRE ATT&CK mapping
-T1595.002 - Active Scanning: Vulnerability Scanning (подходит, если доступ к /admin, /api и похожим путям рассматривается как часть разведки exposed web-сервиса.)
+**Tactic:** Reconnaissance (TA0043)  
+**Technique:** T1595 - Active Scanning  
+**Sub‑technique:** T1595.002 - Vulnerability Scanning
+               ↓ 
+**Related Technique:** T1046 - Network Service Discovery  
