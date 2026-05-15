@@ -1,4 +1,4 @@
-Для эмитации этой атаки, на kali host'e создадим test.ps1, который будет содержать:
+Для имитации этой атаки на Kali-хосте создадим `test.ps1`, который будет содержать:
 
     Write-Output "Malicious simulation"
     whoami
@@ -9,7 +9,7 @@
 
     python3 -m http.server 80
 
-запускать эту команду надо будет с той папки, где лежит файл
+Запускать эту команду нужно из той папки, где находится файл.
 
 ![powershellDownload_prep](../screenshots/image-11.png)
 

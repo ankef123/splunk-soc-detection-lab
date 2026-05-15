@@ -1,4 +1,4 @@
-Сгенерируем безвредную encoded powershell команду (whoami), для того, чтобы проверить как sysmon + конфиг определят атаку.
+Сгенерируем безвредную encoded powershell команду (whoami), для того, чтобы проверить как Sysmon + конфиг определят атаку.
 # 1. Атака
     powershell.exe -enc dwBoAG8AYQBtAGkA
 
