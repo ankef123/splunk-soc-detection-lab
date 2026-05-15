@@ -63,5 +63,7 @@ LogonType(можно использовать для определения ти
 
 # 7. MITRE ATT&CK mapping
 **Tactic:** Credential Access (TA0006).
+
 **Technique:** T1110 - Brute Force
+
 **Sub-technique:** T1110.001 
